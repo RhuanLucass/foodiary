@@ -5,8 +5,11 @@ import { colors } from '../styles/colors';
 
 export function HomeHeader() {
   return (
-    <View className=" bg-lime-400">
-      <SafeAreaView className="flex-row items-center justify-between px-4 pt-3">
+    <View className="bg-lime-400">
+      <SafeAreaView
+        edges={['top']}
+        className="flex-row items-center justify-between px-4 py-3"
+      >
         <View>
           <Text className="font-sans-regular text-sm text-gray-700">
             Olá, 👋
