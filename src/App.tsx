@@ -9,9 +9,9 @@ import {
 } from '@expo-google-fonts/host-grotesk';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { HomeHeader } from './components/HomeHeader';
+
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { MealsList } from './components/MealsList';
+import { Home } from './screens/Home';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -36,8 +36,7 @@ export default function App() {
   return (
     <View className="flex-1 bg-white">
       <SafeAreaProvider>
-        <HomeHeader />
-        <MealsList />
+        <Home />
       </SafeAreaProvider>
     </View>
   );

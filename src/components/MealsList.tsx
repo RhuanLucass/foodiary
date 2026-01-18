@@ -2,6 +2,7 @@ import { FlatList, Text, View } from 'react-native';
 import { MealCard } from './MealCard';
 import { DateSwitcher } from './DateSwitcher';
 import { DailyStats } from './DailyStats';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const meals = [
   {
@@ -60,9 +61,12 @@ function Separator() {
 }
 
 export function MealsList() {
+  const { bottom } = useSafeAreaInsets();
+
   return (
     <FlatList
       data={meals}
+      contentContainerStyle={{ paddingBottom: 80 + bottom + 16 }}
       keyExtractor={(meal) => meal.id}
       ListHeaderComponent={MealsListHeader}
       ItemSeparatorComponent={Separator}
