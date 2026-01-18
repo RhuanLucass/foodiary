@@ -12,6 +12,7 @@
     "@expo-google-fonts/host-grotesk": "^0.4.1",
     "clsx": "^2.1.1",
     "expo": "~54.0.31",
+    "expo-audio": "~1.1.1",
     "expo-font": "~14.0.10",
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
