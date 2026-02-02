@@ -10,10 +10,24 @@ import {
 } from '@expo-google-fonts/host-grotesk';
 import { useEffect } from 'react';
 import '../styles/global.css';
+import { AuthProvider } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+export default function Layout() {
+  return (
+    <SafeAreaProvider>
+      <AuthProvider>
+        <RootLayout />
+      </AuthProvider>
+    </SafeAreaProvider>
+  );
+}
+
+function RootLayout() {
+  const { isLoggedIn, isLoading } = useAuth();
+
   const [loaded, error] = useFonts({
     HostGrotesk_400Regular,
     HostGrotesk_500Medium,
@@ -22,7 +36,10 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded || error) {
+    const isFontLoaded = loaded || error;
+    const isUserLoaded = !isLoading;
+
+    if (isFontLoaded && isUserLoaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
@@ -31,19 +48,15 @@ export default function RootLayout() {
     return null;
   }
 
-  const isLoggedIn = true;
-
   return (
-    <SafeAreaProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={isLoggedIn}>
-          <Stack.Screen name="(private)" />
-        </Stack.Protected>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isLoggedIn}>
+        <Stack.Screen name="(private)" />
+      </Stack.Protected>
 
-        <Stack.Protected guard={!isLoggedIn}>
-          <Stack.Screen name="(public)" />
-        </Stack.Protected>
-      </Stack>
-    </SafeAreaProvider>
+      <Stack.Protected guard={!isLoggedIn}>
+        <Stack.Screen name="(public)" />
+      </Stack.Protected>
+    </Stack>
   );
 }
