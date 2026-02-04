@@ -20,7 +20,7 @@ export default function SignIn() {
             </Text>
 
             <View className="mt-6 w-full p-5">
-              <Link href="/signup">
+              <Link href="/signup" asChild>
                 <Button className="w-full">Criar conta</Button>
               </Link>
               <View className="mt-[30px] flex-row items-center justify-center gap-2">
