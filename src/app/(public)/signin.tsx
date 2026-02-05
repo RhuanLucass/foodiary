@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { AuthLayout } from '../../components/AuthLayout';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
@@ -8,6 +8,7 @@ import { colors } from '../../styles/colors';
 import z from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAuth } from '../../hooks/useAuth';
 
 const schema = z.object({
   email: z.email('Informe um e-mail válido'),
@@ -23,7 +24,18 @@ export default function SignIn() {
     },
   });
 
-  const handleSubmit = form.handleSubmit((formData) => {});
+  const { signIn } = useAuth();
+
+  const handleSubmit = form.handleSubmit(async (formData) => {
+    try {
+      await signIn(formData);
+    } catch (error) {
+      console.log(error);
+      Alert.alert(
+        'Não foi possível entrar na conta. Verifique suas credenciais.'
+      );
+    }
+  });
 
   return (
     <AuthLayout
@@ -72,7 +84,11 @@ export default function SignIn() {
           <Button onPress={router.back} size="icon" color="gray">
             <ArrowLeftIcon size={20} color={colors.black[700]} />
           </Button>
-          <Button className="flex-1" onPress={handleSubmit}>
+          <Button
+            className="flex-1"
+            onPress={handleSubmit}
+            loading={form.formState.isSubmitting}
+          >
             Entrar
           </Button>
         </View>

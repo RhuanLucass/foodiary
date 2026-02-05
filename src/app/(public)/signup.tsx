@@ -83,25 +83,25 @@ export default function SignUp() {
     setCurrentStepIndex((prevState) => prevState + 1);
   }
 
-  // const { signUp } = useAuth();
+  const { signUp } = useAuth();
 
   const handleSubmit = form.handleSubmit(async (formData) => {
     try {
       const [day, month, year] = formData.birthDate.split('/');
 
-      // await signUp({
-      //   height: Number(formData.height),
-      //   weight: Number(formData.weight),
-      //   activityLevel: Number(formData.activityLevel),
-      //   gender: formData.gender,
-      //   goal: formData.goal,
-      //   birthDate: `${year}-${month}-${day}`,
-      //   account: {
-      //     email: formData.email,
-      //     name: formData.name,
-      //     password: formData.password,
-      //   },
-      // });
+      await signUp({
+        height: Number(formData.height),
+        weight: Number(formData.weight),
+        activityLevel: Number(formData.activityLevel),
+        gender: formData.gender,
+        goal: formData.goal,
+        birthDate: `${year}-${month}-${day}`,
+        account: {
+          email: formData.email,
+          name: formData.name,
+          password: formData.password,
+        },
+      });
     } catch (error) {
       if (isAxiosError(error)) {
         console.log(JSON.stringify(error.response?.data, null, 2));
