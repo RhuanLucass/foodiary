@@ -3,6 +3,7 @@ import { MealCard } from './MealCard';
 import { DateSwitcher } from './DateSwitcher';
 import { DailyStats } from './DailyStats';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuth } from '../hooks/useAuth';
 
 const meals = [
   {
@@ -24,26 +25,28 @@ const meals = [
 ];
 
 function MealsListHeader() {
+  const { user } = useAuth();
+
   return (
     <>
       <DateSwitcher />
       <View className="mt-2">
         <DailyStats
           calories={{
-            current: 500,
-            goal: 2500,
+            current: 0,
+            goal: user?.calories ?? 0,
           }}
           carbohydrates={{
-            current: 150,
-            goal: 300,
+            current: 0,
+            goal: user?.carbohydrates ?? 0,
           }}
           proteins={{
-            current: 80,
-            goal: 150,
+            current: 0,
+            goal: user?.proteins ?? 0,
           }}
           fats={{
-            current: 60,
-            goal: 70,
+            current: 0,
+            goal: user?.fats ?? 0,
           }}
         />
       </View>
