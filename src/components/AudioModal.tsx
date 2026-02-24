@@ -10,6 +10,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import {
   CheckIcon,
+  FileType,
   MicIcon,
   PauseIcon,
   PlayIcon,
@@ -23,6 +24,10 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../styles/colors';
 import { cn } from '../utils/cn';
 import { Button } from './Button';
+import { useMutation } from '@tanstack/react-query';
+import { httpClient } from '../services/httpClient';
+import * as FileSystem from 'expo-file-system';
+import { useCreateMeal } from '../hooks/useCreateMeal';
 
 interface IAudioModalProps {
   open: boolean;
@@ -36,6 +41,9 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
   const { isRecording } = useAudioRecorderState(audioRecorder);
   const player = useAudioPlayer(audioUri);
   const { playing } = useAudioPlayerStatus(player);
+
+
+  const {createMeal} = useCreateMeal('audio/m4a');
 
   useEffect(() => {
     (async () => {
@@ -167,7 +175,7 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
                   </Button>
                 )}
 
-                <Button size="icon">
+                <Button size="icon" onPress={() => createMeal(audioUri)}>
                   <CheckIcon size={20} color={colors.black[700]} />
                 </Button>
               </View>
