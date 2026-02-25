@@ -1,26 +1,26 @@
-import { useMutation } from "@tanstack/react-query";
-import { httpClient } from "../services/httpClient";
+import { useMutation } from '@tanstack/react-query';
+import { httpClient } from '../services/httpClient';
+import { router } from 'expo-router';
 
 type CreateMealResponse = {
-  uploadURL: string
-  mealId: string
-}
+  uploadURL: string;
+  mealId: string;
+};
 
-export function useCreateMeal(fileType: 'image/jpeg' | 'audio/m4a') {
-  const {mutateAsync: createMeal} = useMutation({
+type CreateMealParams = {
+  fileType: 'image/jpeg' | 'audio/m4a';
+  onSuccess(mealId: string): void;
+};
+
+export function useCreateMeal({ fileType, onSuccess }: CreateMealParams) {
+  const { mutateAsync: createMeal, isPending: isLoading } = useMutation({
     mutationFn: async (uri: string) => {
-      console.log('1. Iniciando upload de imagem, URI:', uri);
-      
-      const {data} = await httpClient.post<CreateMealResponse>('/meals', {
-        fileType
+      const { data } = await httpClient.post<CreateMealResponse>('/meals', {
+        fileType,
       });
-      
-      console.log('2. URL pré-assinada recebida');
 
       // Lê o arquivo diretamente como blob usando fetch
-      const fileBlob = await fetch(uri).then(r => r.blob());
-      
-      console.log('3. Arquivo lido como blob, tamanho:', fileBlob.size, 'tipo:', fileBlob.type);
+      const fileBlob = await fetch(uri).then((r) => r.blob());
 
       // Upload usando Fetch nativo com o blob
       const uploadResponse = await fetch(data.uploadURL, {
@@ -31,17 +31,20 @@ export function useCreateMeal(fileType: 'image/jpeg' | 'audio/m4a') {
         body: fileBlob,
       });
 
-      console.log('4. Upload finalizado, status:', uploadResponse.status);
-
       if (!uploadResponse.ok) {
         throw new Error(`Upload failed with status ${uploadResponse.status}`);
       }
 
-      console.log('5. Upload concluído com sucesso! MealId:', data.mealId);
-    }
+      return { mealId: data.mealId };
+    },
+    onSuccess: ({ mealId }) => {
+      onSuccess(mealId);
+    },
+    onSettled: () => {},
   });
 
   return {
-    createMeal
-  }
+    createMeal,
+    isLoading,
+  };
 }

@@ -28,6 +28,7 @@ import { useMutation } from '@tanstack/react-query';
 import { httpClient } from '../services/httpClient';
 import * as FileSystem from 'expo-file-system';
 import { useCreateMeal } from '../hooks/useCreateMeal';
+import { router } from 'expo-router';
 
 interface IAudioModalProps {
   open: boolean;
@@ -43,7 +44,12 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
   const { playing } = useAudioPlayerStatus(player);
 
 
-  const {createMeal} = useCreateMeal('audio/m4a');
+  const {createMeal, isLoading} = useCreateMeal({
+      fileType: 'audio/m4a',
+    onSuccess: mealId => {
+      router.push(`/meals/${mealId}`);
+      handleCloseModal();
+    }});
 
   useEffect(() => {
     (async () => {
@@ -175,7 +181,11 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
                   </Button>
                 )}
 
-                <Button size="icon" onPress={() => createMeal(audioUri)}>
+                <Button
+                  size="icon"
+                  onPress={() => createMeal(audioUri)}
+                  loading={isLoading}
+                  >
                   <CheckIcon size={20} color={colors.black[700]} />
                 </Button>
               </View>
