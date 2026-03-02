@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { uploadAsync } from 'expo-file-system/legacy';
 import { httpClient } from '../services/httpClient';
 
 type CreateMealResponse = {
@@ -21,9 +20,16 @@ export function useCreateMeal({ fileType, onSuccess }: CreateMealParams) {
         fileType,
       });
 
-      await uploadAsync(data.uploadURL, uri, {
-        httpMethod: 'PUT',
-        uploadType: 1, // FileSystemUploadType.BINARY_CONTENT
+      // Lê o arquivo diretamente como blob para manter integridade
+      const fileBlob = await fetch(uri).then((r) => r.blob());
+
+      // Upload usando Fetch nativo com o blob binário
+      await fetch(data.uploadURL, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': fileType,
+        },
+        body: fileBlob,
       });
 
       return { mealId: data.mealId };
