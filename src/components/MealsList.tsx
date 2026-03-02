@@ -8,9 +8,10 @@ import { useQuery } from '@tanstack/react-query';
 import { httpClient } from '../services/httpClient';
 import { UtensilsCrossedIcon } from 'lucide-react-native';
 import { colors } from '../styles/colors';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 
-type Meals = {
+type Meal = {
   name: string;
   id: string;
   icon: string;
@@ -29,10 +30,39 @@ interface IMealsListHeaderProps {
   currentDate: Date;
   onPreviousDate(): void;
   onNextDate(): void;
+  meals: Meal[];
 }
 
-function MealsListHeader({currentDate, onNextDate, onPreviousDate}: IMealsListHeaderProps) {
+function MealsListHeader({
+    currentDate,
+    onNextDate,
+    onPreviousDate,
+    meals
+  }: IMealsListHeaderProps) {
   const { user } = useAuth();
+
+  const totals = useMemo(() => {
+    let calories = 0;
+    let proteins = 0;
+    let carbohydrates = 0;
+    let fats = 0;
+
+    for(const meal of meals) {
+      for(const food of meal.foods) {
+        calories += food.calories;
+        proteins += food.proteins;
+        carbohydrates += food.carbohydrates;
+        fats += food.fats;
+      }
+    }
+
+    return {
+      calories,
+      proteins,
+      carbohydrates,
+      fats,
+    }
+  },[meals])
 
   return (
     <>
@@ -44,19 +74,19 @@ function MealsListHeader({currentDate, onNextDate, onPreviousDate}: IMealsListHe
       <View className="mt-2">
         <DailyStats
           calories={{
-            current: 0,
+            current: totals.calories,
             goal: user!.calories,
           }}
           carbohydrates={{
-            current: 0,
+            current: totals.carbohydrates,
             goal: user!.carbohydrates,
           }}
           proteins={{
-            current: 0,
+            current: totals.proteins,
             goal: user!.proteins,
           }}
           fats={{
-            current: 0,
+            current: totals.fats,
             goal: user!.fats,
           }}
         />
@@ -87,11 +117,11 @@ export function MealsList() {
     return `${year}-${month}-${day}`;
   }, [currentDate])
 
-  const { data: meals } = useQuery({
+  const { data: meals, refetch } = useQuery({
     queryKey: ['meals', dateParam],
     staleTime: 15_000,
     queryFn: async () => {
-      const { data } = await httpClient.get<{ meals: Meals[] }>('/meals', {
+      const { data } = await httpClient.get<{ meals: Meal[] }>('/meals', {
         params: {
           date: dateParam,
         },
@@ -99,6 +129,12 @@ export function MealsList() {
       return data.meals;
     },
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  )
 
   function handlePreviousDate() {
     setCurrentDate(prevState => {
@@ -128,6 +164,7 @@ export function MealsList() {
           onNextDate={handleNextDate}
           onPreviousDate={handlePreviousDate}
           currentDate={currentDate}
+          meals={meals ?? []}
         />
       )}
       ItemSeparatorComponent={Separator}
