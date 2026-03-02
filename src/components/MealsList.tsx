@@ -134,7 +134,13 @@ export function MealsList() {
       ListEmptyComponent={EmptyList}
       renderItem={({ item: meal }) => (
         <View className="mx-5">
-          <MealCard id={meal.id} name={meal.name} />
+          <MealCard
+            id={meal.id}
+            name={meal.name}
+            icon={meal.icon}
+            foods={meal.foods}
+            createdAt={new Date(meal.createdAt)}
+          />
         </View>
       )}
     />
