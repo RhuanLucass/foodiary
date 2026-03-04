@@ -25,15 +25,21 @@ export function MealCard({
         </Text>
 
         <View className="mt-2 flex-row items-center gap-3 rounded-2xl border border-gray-400 px-4 py-5">
-          <View className="size-12 items-center justify-center rounded-full bg-gray-200">
+          <View className="size-12 flex-shrink-0 items-center justify-center rounded-full bg-gray-200">
             <Text>{icon}</Text>
           </View>
 
-          <View>
-            <Text className="font-sans-regular text-base text-gray-700">
+          <View className="flex-1 flex-shrink">
+            <Text 
+              className="font-sans-regular text-base text-gray-700"
+              numberOfLines={1}
+            >
               {name}
             </Text>
-            <Text className="font-sans-medium text-base text-black-700">
+            <Text 
+              className="font-sans-medium text-base text-black-700"
+              numberOfLines={2}
+            >
               {foods.map(({name}) => name).join(', ')}
             </Text>
           </View>
