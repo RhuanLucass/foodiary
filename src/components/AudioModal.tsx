@@ -49,7 +49,15 @@ export function AudioModal({ onClose, open }: IAudioModalProps) {
     onSuccess: mealId => {
       router.push(`/meals/${mealId}`);
       handleCloseModal();
-    }});
+    },
+    onError: () => {
+      handleCloseModal();
+      Alert.alert(
+        'Erro ao criar refeição',
+        'Não foi possível processar o áudio. Tente novamente.'
+      );
+    }
+  });
 
   useEffect(() => {
     (async () => {

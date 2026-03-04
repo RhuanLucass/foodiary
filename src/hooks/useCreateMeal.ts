@@ -9,9 +9,14 @@ type CreateMealResponse = {
 type CreateMealParams = {
   fileType: 'image/jpeg' | 'audio/m4a';
   onSuccess(mealId: string): void;
+  onError?(): void;
 };
 
-export function useCreateMeal({ fileType, onSuccess }: CreateMealParams) {
+export function useCreateMeal({
+  fileType,
+  onSuccess,
+  onError,
+}: CreateMealParams) {
   const queryClient = useQueryClient();
 
   const { mutateAsync: createMeal, isPending: isLoading } = useMutation({
@@ -37,6 +42,9 @@ export function useCreateMeal({ fileType, onSuccess }: CreateMealParams) {
     onSuccess: ({ mealId }) => {
       onSuccess(mealId);
       queryClient.refetchQueries({ queryKey: ['meals'] });
+    },
+    onError: () => {
+      onError?.();
     },
   });
 

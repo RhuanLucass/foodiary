@@ -2,7 +2,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { StatusBar } from 'expo-status-bar';
 import { CameraIcon, CheckIcon, Trash2Icon, XIcon } from 'lucide-react-native';
 import { useRef, useState } from 'react';
-import { Image, Modal, Text, View } from 'react-native';
+import { Alert, Image, Modal, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../styles/colors';
 import { Button } from './Button';
@@ -25,7 +25,15 @@ export function CameraModal({ onClose, open }: ICameraModalProps) {
   onSuccess: mealId => {
     router.push(`/meals/${mealId}`);
     handleCloseModal();
-  }});
+  },
+  onError: () => {
+    handleCloseModal();
+    Alert.alert(
+      'Erro ao criar refeição',
+      'Não foi possível processar a imagem. Tente novamente.'
+    );
+  }
+});
 
   function handleCloseModal() {
     onClose();
